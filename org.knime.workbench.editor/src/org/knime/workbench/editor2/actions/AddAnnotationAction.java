@@ -50,21 +50,21 @@ import org.eclipse.swt.graphics.Point;
 import org.knime.workbench.KNIMEEditorPlugin;
 import org.knime.workbench.core.util.ImageRepository;
 import org.knime.workbench.editor2.WorkflowEditor;
+import org.knime.workbench.editor2.WorkflowEditorMode;
 import org.knime.workbench.editor2.commands.AddAnnotationCommand;
 import org.knime.workbench.editor2.editparts.NodeContainerEditPart;
 
 /**
- *
  * @author ohl, KNIME AG, Zurich, Switzerland
  */
 public class AddAnnotationAction extends AbstractNodeAction {
-
     /** unique ID for this action. * */
     public static final String ID = "knime.action.addannotation";
 
     private static final int DEFAULT_XLOC = 20;
 
     private static final int DEFAULT_YLOC = 29;
+
 
     private int m_x;
 
@@ -118,18 +118,26 @@ public class AddAnnotationAction extends AbstractNodeAction {
      */
     @Override
     public void runOnNodes(final NodeContainerEditPart[] nodeParts) {
-        AddAnnotationCommand aac =
-                new AddAnnotationCommand(getManager(), getEditor().getViewer(),
-                        new Point(m_x, m_y));
+        final WorkflowEditor we = getEditor();
+        final AddAnnotationCommand aac =
+            new AddAnnotationCommand(getManager(), we.getViewer(), new Point(m_x, m_y));
+
         getCommandStack().execute(aac); // enables undo
 
         // update the actions
-        getEditor().updateActions();
+        we.updateActions();
 
         // Give focus to the editor again. Otherwise the actions (selection)
         // is not updated correctly.
         getWorkbenchPart().getSite().getPage().activate(getWorkbenchPart());
 
+        if (WorkflowEditorMode.NODE_EDIT.equals(we.getEditorMode())) {
+            final ToggleEditorModeAction action = new ToggleEditorModeAction(we);
+
+            // the method we are in is invoked by our parent's runInSWT() method, so it's safe to assume we can invoke
+            // that method on this action from this thread
+            action.runInSWT();
+        }
     }
 
     /**
