@@ -111,7 +111,7 @@ public interface FeatureSelectionStrategy {
     /**
      * @return the feature that was identified as best feature in the latest search round
      */
-    public Integer getLastBestFeature();
+    public List<Integer> getLastBestFeature();
 
     /**
      * @return the maximal number of iterations this strategy performs for the current configuration.

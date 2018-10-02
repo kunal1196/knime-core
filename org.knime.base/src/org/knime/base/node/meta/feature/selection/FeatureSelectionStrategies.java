@@ -75,7 +75,9 @@ public class FeatureSelectionStrategies {
              * Backward Feature Elimination. Starts from the full set and iteratively removes
              * the feature whose removal yields the smallest loss.
              */
-            BackwardFeatureElimination("Backward Feature Elimination", (byte)1);
+            BackwardFeatureElimination("Backward Feature Elimination", (byte)1),
+
+            EvolutionaryStrategy("Evolutionary", (byte) 2);
 
         private final String m_string;
 
@@ -132,6 +134,8 @@ public class FeatureSelectionStrategies {
                 return new FFSStrategy(subsetSize, featureColumns);
             case BackwardFeatureElimination:
                 return new FBSStrategy(subsetSize, featureColumns);
+            case EvolutionaryStrategy:
+                return new EvolutionaryStrategy(subsetSize, featureColumns);
             default:
                 throw new IllegalArgumentException("The FeatureSelectionStrategy \"" + strategy + "\" is unknown.");
         }
